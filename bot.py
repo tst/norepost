@@ -6,14 +6,39 @@ import pytz
 import ago
 import sqlite3
 import os
+import sys
+
+# CHANGE THESE
+USERNAME = ""
+PASSWORD = ""
+USER_AGENT = "no repost pls bot by /u/tst__"
+SUBREDDIT = "montageparodies"
+
+# STOP CHANGING 
+
+# if USERNAME and PASSWORD isn't set the bot will use the environment variables
+# NOREPOST_USER for USERNAME
+# NOREPOST_PASSWORD for PASSWORD
+if USERNAME == "":
+    try:
+        USERNAME = os.environ['NOREPOST_USER']
+    except KeyError:
+        sys.exit("Please add the username or set the environment variable NOREPOST_USER")
+
+if PASSWORD == "":
+    try:
+        PASSWORD = os.environ['NOREPOST_PASSWORD']
+    except KeyError:
+        sys.exit("Please add the password or set the environment variable NOREPOST_PASSWORD")
+
 
 # login
-r = praw.Reddit(user_agent="no repost pls bot by /u/tst__")
-r.login(os.environ['NOREPOST_USER'], os.environ['NOREPOST_PASSWORD'])
+r = praw.Reddit(user_agent=USER_AGENT)
+r.login(USERNAME, PASSWORD)
 
 
 # get newest
-new_sub = r.get_subreddit('montageparodies').get_new()
+new_sub = r.get_subreddit(SUBREDDIT).get_new()
 
 conn = sqlite3.connect('/home/tim/norepost/db.db')
 c = conn.cursor()
@@ -37,14 +62,14 @@ for x in new_sub:
             yid = urlparse.parse_qs(qurl)['/watch?v'][0]
 
         #print ">", x.url, x.title, yid
-        results = r.search('url:"' + yid + '"', subreddit='montageparodies')
+        results = r.search('url:"' + yid + '"', subreddit=SUBREDDIT)
 
     elif x.domain == "youtu.be":
         up = urlparse.urlparse(x.url)
         yid = up.path[1:]
-        results = r.search('url:"' + yid + '"', subreddit='montageparodies')
+        results = r.search('url:"' + yid + '"', subreddit=SUBREDDIT)
     else:
-        results = r.search('url:"' + x.url + '"', subreddit='montageparodies')
+        results = r.search('url:"' + x.url + '"', subreddit=SUBREDDIT)
         
     found = []
     for y in results:
