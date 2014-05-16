@@ -1,5 +1,9 @@
 # Norepost bot for reddit
 
+## Description
+
+This bot crawls the /new page of a subreddit to detect reposts. It uses special filtering for youtube links otherwise it searches if the same URL was submitted before.
+
 ## Installation
 
 The bot runs on Python 2.7 with the following packages:
