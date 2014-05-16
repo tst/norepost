@@ -32,17 +32,21 @@ if PASSWORD == "":
         sys.exit("Please add the password or set the environment variable NOREPOST_PASSWORD")
 
 
-# login
+# login to Reddit
 r = praw.Reddit(user_agent=USER_AGENT)
 r.login(USERNAME, PASSWORD)
 
 
-# get newest
+# get the newest submissions
 new_sub = r.get_subreddit(SUBREDDIT).get_new()
 
 conn = sqlite3.connect('/home/tim/norepost/db.db')
 c = conn.cursor()
 
+# create the table if it doesn't exist
+c.execute("CREATE TABLE IF NOT EXISTS kush (id TEXT);");
+
+# check every new submission
 for x in new_sub:
     
     c.execute("SELECT id FROM kush WHERE id = ?", (x.id,))
