@@ -18,8 +18,6 @@ INTRODUCTION = "Yo dank bro. It seems that some scrubs uploaded this MLG footage
 # Ending appears after posting the matching URLS; \n\n for newline
 ENDING = """i cry evertim :(((( \n\n**** \n\n^(I'm currently testing this bot. Q&A @ /u/tst__)."""
 
-print INTRODUCTION
-print ENDING
 ### STOP CHANGING 
 
 # if USERNAME and PASSWORD isn't set the bot will use the environment variables
