@@ -90,6 +90,9 @@ for x in new_sub:
         # i.e. found the result which we are looking at
         if y.id == x.id:
             continue
+        # reject if the examined submission is older than the found one
+        elif x.created_utc < y.created_utc:
+            continue
         else:
             # calculate time diff
             # translates to UTC so that the time isn't location-dependend
