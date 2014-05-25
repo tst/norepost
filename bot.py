@@ -7,33 +7,7 @@ import ago
 import sqlite3
 import os
 import sys
-
-### CHANGE THESE
-USERNAME = ""
-PASSWORD = ""
-USER_AGENT = "no repost pls bot by /u/tst__"
-SUBREDDIT = "montageparodies"
-# Introduction appears before posting the matching URLs
-INTRODUCTION = "Yo dank bro. It seems that some scrubs uploaded this MLG footage b4 u:"
-# Ending appears after posting the matching URLS; \n\n for newline
-ENDING = """i cry evertim :(((( \n\n**** \n\n^(I'm currently testing this bot. Q&A @ /u/tst__)."""
-
-### STOP CHANGING 
-
-# if USERNAME and PASSWORD isn't set the bot will use the environment variables
-# NOREPOST_USER for USERNAME
-# NOREPOST_PASSWORD for PASSWORD
-if USERNAME == "":
-    try:
-        USERNAME = os.environ['NOREPOST_USER']
-    except KeyError:
-        sys.exit("Please add the username or set the environment variable NOREPOST_USER")
-
-if PASSWORD == "":
-    try:
-        PASSWORD = os.environ['NOREPOST_PASSWORD']
-    except KeyError:
-        sys.exit("Please add the password or set the environment variable NOREPOST_PASSWORD")
+from handle_config import *
 
 
 # login to Reddit
@@ -44,7 +18,7 @@ r.login(USERNAME, PASSWORD)
 # get the newest submissions
 new_sub = r.get_subreddit(SUBREDDIT).get_new()
 
-conn = sqlite3.connect('/home/tim/norepost/db.db')
+conn = sqlite3.connect(PATHTO + "db.db")
 c = conn.cursor()
 
 # create the table if it doesn't exist
@@ -103,19 +77,22 @@ for x in new_sub:
     
     # if we found reposts we're going to add a comment to the submission
     if found:
-        m = INTRODUCTION
+        m = COMMENT_INTRODUCTION
         for f in found:
             m += "\n\n * [%s] [%s (+%i|%i)](%s)" % f
         m += "\n\n"
-        m += ENDING
-
-        x.add_comment(m)
+        m += COMMENT_ENDING
+        
+        if logging.getLogger().getEffectiveLevel() <= logging.DEBUG:
+            logging.debug(m)
+        else:
+            x.add_comment(m)
 
     
     # Insert id into the database to that it won't be rechecked
     c.execute("INSERT INTO kush VALUES (?)", (x.id, ))
     conn.commit()
 
-    time.sleep(8)
+    time.sleep(4)
 
 conn.close()
