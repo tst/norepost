@@ -16,7 +16,7 @@ SUBREDDIT = "montageparodies"
 # Introduction appears before posting the matching URLs
 INTRODUCTION = "Yo dank bro. It seems that some scrubs uploaded this MLG footage b4 u:"
 # Ending appears after posting the matching URLS; \n\n for newline
-ENDING = """i cry evertim :(((( \n\n**** \n\n^(I'm currently testing this bot. Q&A @ /u/tst__)."""
+ENDING = """i cry evertim :(((( \n\n**** \n\n"""
 
 ### STOP CHANGING 
 
@@ -64,13 +64,23 @@ for x in new_sub:
     results = None
     if x.domain in ["youtube.com", "m.youtube.com"]:
         up = urlparse.urlparse(x.url)
-
+        
         try:
             yid = urlparse.parse_qs(up.query)['v'][0]
 
-        except KeyError: # attribution URL from youtube
-            qurl = urlparse.parse_qs(up.query)['u'][0]
-            yid = urlparse.parse_qs(qurl)['/watch?v'][0]
+        except KeyError:
+            # edit URL
+            if up.path == u"/edit":
+                yid = urlparse.parse_qs(up.query)['video_id'][0]
+            else:
+                # probably an attribution URL
+                try:
+                    qurl = urlparse.parse_qs(up.query)['u'][0]
+                    yid = urlparse.parse_qs(qurl)['/watch?v'][0]
+                except KeyError:
+                    # something's wrong with the url, seriously
+                    print x.url
+                    continue
 
         results = r.search('url:"' + yid + '"', subreddit=SUBREDDIT)
 
