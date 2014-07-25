@@ -78,8 +78,10 @@ for x in new_sub:
                     qurl = urlparse.parse_qs(up.query)['u'][0]
                     yid = urlparse.parse_qs(qurl)['/watch?v'][0]
                 except KeyError:
-                    # something's wrong with the url, seriously
-                    print x.url
+                    # happens in case the submission URL is
+                    # * a playlist 
+                    # * a link to a user profil
+                    # * a link to a search
                     continue
 
         results = r.search('url:"' + yid + '"', subreddit=SUBREDDIT)
